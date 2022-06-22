@@ -206,6 +206,8 @@ class EnhanceStepper extends StatefulWidget {
     this.padding,
     this.backgroundColor,
     this.horizontalStepperHeight,
+    this.activeLineColor,
+    this.lineWidth = 10.0,
   })  : assert(0 <= currentStep && currentStep < steps.length),
         super(key: key);
 
@@ -252,6 +254,12 @@ class EnhanceStepper extends StatefulWidget {
 
   /// The index into [steps] of the current step whose content is displayed.
   final int currentStep;
+
+  /// The width of displayed line.
+  final double lineWidth;
+
+  /// The color of displayed line.
+  final Color? activeLineColor;
 
   /// The callback called when a step is tapped, with its index passed as
   /// an argument.
@@ -796,9 +804,11 @@ class _EnhanceStepperState extends State<EnhanceStepper>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                height: 1,
-                width: 10,
-                color: Colors.grey.shade400,
+                height: 2,
+                width: widget.lineWidth,
+                color: widget.currentStep > i
+                    ? widget.activeLineColor
+                    : Colors.grey.shade400,
               ),
               if (widget.type == StepperType.horizontal &&
                   widget.horizontalTitlePosition ==
@@ -820,15 +830,13 @@ class _EnhanceStepperState extends State<EnhanceStepper>
           color: widget.backgroundColor ?? Colors.white,
           child: SizedBox(
             height: widget.horizontalStepperHeight ?? 100,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              physics: widget.physics,
-              children: children
-                  .map((e) => Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 4),
-                        child: e,
-                      ))
-                  .toList(),
+            child: Center(
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                physics: widget.physics,
+                shrinkWrap: true,
+                children: children,
+              ),
             ),
           ),
         ),
